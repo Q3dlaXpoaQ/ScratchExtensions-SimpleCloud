@@ -13,68 +13,68 @@
                 name: '简单联机',
                 color1: '#8608fc',
                 blocks: [{
-                        opcode: 'connect',
-                        blockType: 'command',
-                        text: '连接到[IP]',
-                        arguments: {
-                            IP: {
-                                type: 'string',
-                                defaultValue: 'wss://clvtpd-qnmsta-1206.preview.myide.io'
-                            }
+                    opcode: 'connect',
+                    blockType: 'command',
+                    text: '连接到[IP]',
+                    arguments: {
+                        IP: {
+                            type: 'string',
+                            defaultValue: 'wss://clvtpd-qnmsta-1206.preview.myide.io'
                         }
-                    },
-                    {
-                        opcode: 'closeSocket',
-                        blockType: 'command',
-                        text: '断开连接'
-                    },
-                    {
-                        opcode: 'sendMessage',
-                        blockType: 'command',
-                        text: '发送[MESSAGE]到服务器',
-                        arguments: {
-                            MESSAGE: {
-                                type: 'string',
-                                defaultValue: ''
-                            }
+                    }
+                },
+                {
+                    opcode: 'closeSocket',
+                    blockType: 'command',
+                    text: '断开连接'
+                },
+                {
+                    opcode: 'sendMessage',
+                    blockType: 'command',
+                    text: '发送[MESSAGE]到服务器',
+                    arguments: {
+                        MESSAGE: {
+                            type: 'string',
+                            defaultValue: ''
                         }
-                    },
-                    {
-                        opcode: 'setID',
-                        blockType: 'command',
-                        text: '将用户名设置为[ID]',
-                        arguments: {
-                            ID: {
-                                type: 'string',
-                                defaultValue: ''
-                            }
+                    }
+                },
+                {
+                    opcode: 'setID',
+                    blockType: 'command',
+                    text: '将用户名设置为[ID]',
+                    arguments: {
+                        ID: {
+                            type: 'string',
+                            defaultValue: ''
                         }
-                    },
-                    {
-                        opcode: 'Return_receive',
-                        blockType: 'reporter',
-                        text: '接收到的信息',
+                    }
+                },
+                {
+                    opcode: 'Return_receive',
+                    blockType: 'reporter',
+                    text: '接收到的信息',
 
-                    },
+                },
 
-                    {
-                        opcode: 'Return_username',
-                        blockType: 'reporter',
-                        text: '用户名',
+                {
+                    opcode: 'Return_username',
+                    blockType: 'reporter',
+                    text: '用户名',
 
-                    },
-                    {
-                        opcode: 'Return_message_Num',
-                        blockType: 'reporter',
-                        text: '共收到的数据量',
+                },
+                {
+                    opcode: 'Return_message_Num',
+                    blockType: 'reporter',
+                    text: '共收到的数据量',
 
-                    },
-                    {
-                        opcode: 'Return_isConnect',
-                        blockType: 'Boolean',
-                        text: '是否连接到服务器?',
+                },
+                {
+                    opcode: 'Return_isConnect',
+                    blockType: 'Boolean',
+                    text: '是否连接到服务器?',
 
-                    },
+                },
                 ],
             };
         }
@@ -99,7 +99,9 @@
             MESSAGE
         }) {
             if (username != null) {
-                Server.send(JSON.stringify({'name': username,'val': String(MESSAGE)}))
+                let tempjson = { 'name': username, 'val': {} }
+                tempjson['val'] = JSON.parse(MESSAGE)
+                Server.send(JSON.stringify(tempjson))
             }
         }
         setID({
@@ -113,13 +115,13 @@
             return Message_List;
         }
         Return_isConnect() {
-            const self=this
-            if (Server.readyState==3||Server.readyState==0){
-                self.isRunning=false
+            const self = this
+            if (Server.readyState == 3 || Server.readyState == 0) {
+                self.isRunning = false
 
             }
-            else{
-                self.isRunning=true
+            else {
+                self.isRunning = true
             }
             console.log(Server.readyState)
             return String(self.isRunning)
@@ -135,11 +137,11 @@
             const self = this;
             if (this.isRunning) {
                 if (username != null) {
-                    Server.send(JSON.stringify({'name': username,'val': 'disconnect'}))
+                    Server.send(JSON.stringify({ 'name': username, 'val': 'disconnect' }))
                 }
                 Server.close();
                 self.isRunning = false;
-                Message_List=''
+                Message_List = ''
             }
         }
 
