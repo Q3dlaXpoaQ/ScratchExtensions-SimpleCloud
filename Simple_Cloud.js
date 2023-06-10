@@ -116,14 +116,14 @@
         }
         Return_isConnect() {
             const self = this
-            if (Server.readyState == 3 || Server.readyState == 0) {
-                self.isRunning = false
+            if (Server.readyState == 1) {
+                self.isRunning = true
 
             }
             else {
-                self.isRunning = true
+                self.isRunning = false
+                username=null
             }
-            console.log(Server.readyState)
             return String(self.isRunning)
 
         }
@@ -139,6 +139,7 @@
                 if (username != null) {
                     Server.send(JSON.stringify({ 'name': username, 'val': 'disconnect' }))
                 }
+                username=null;
                 Server.close();
                 self.isRunning = false;
                 Message_List = ''
