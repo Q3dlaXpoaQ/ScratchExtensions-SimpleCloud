@@ -114,13 +114,14 @@
         }
         Return_isConnect() {
             const self=this
-            if (Server.readyState==3){
+            if (Server.readyState==3||Server.readyState==0){
                 self.isRunning=false
 
             }
             else{
                 self.isRunning=true
             }
+            console.log(Server.readyState)
             return String(self.isRunning)
 
         }
@@ -138,7 +139,7 @@
                 }
                 Server.close();
                 self.isRunning = false;
-                self.Message_List=''
+                Message_List=''
             }
         }
 
