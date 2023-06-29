@@ -56,6 +56,12 @@
                     text: '接收到的信息',
 
                 },
+                {
+                    opcode: 'Return_Server_List',
+                    blockType: 'reporter',
+                    text: '服务器列表',
+
+                },
 
                 {
                     opcode: 'Return_username',
@@ -133,6 +139,9 @@
         Return_username() {
             return username;
         }
+        Return_Server_List(){
+            return "{wss://clvtpd-qnmsta-1206.preview.myide.io,wss://b4b72ea4-1206-app.lightly.teamcode.com?port=1206&dcsId=b4b72ea4&token=B1zgKRFqRIW7N5ZL7FvZJA}"
+        }
         closeSocket() {
             const self = this;
             if (this.isRunning) {
@@ -145,7 +154,6 @@
                 Message_List = ''
             }
         }
-
     }
 
     Scratch.extensions.register(new SimpleCloud());
