@@ -2,8 +2,8 @@
     let Server;
     let messageNum = 0;
     let username = null;
-    var Message_List;
-    var GlobalVar;
+    let Message_List='';
+    let GlobalVar='';
     class SimpleCloud {
         constructor() {
             this.isRunning = false
@@ -14,7 +14,7 @@
                 name: '简单联机',
                 color1: '#8608fc',
                 blocks: [{
-                        opcode: 'connect',
+                        opcode: 'Connect',
                         blockType: 'command',
                         text: '连接到[IP]',
                         arguments: {
@@ -25,12 +25,23 @@
                         }
                     },
                     {
-                        opcode: 'closeSocket',
+                        opcode: 'SetID',
+                        blockType: 'command',
+                        text: '将用户名设置为[ID]',
+                        arguments: {
+                            ID: {
+                                type: 'string',
+                                defaultValue: ''
+                            }
+                        }
+                    },
+                    {
+                        opcode: 'CloseSocket',
                         blockType: 'command',
                         text: '断开连接'
                     },
                     {
-                        opcode: 'sendMessage',
+                        opcode: 'SendMessage',
                         blockType: 'command',
                         text: '发送[MESSAGE]到服务器',
                         arguments: {
@@ -51,16 +62,18 @@
                             }
                         }
                     },
+
+
                     {
-                        opcode: 'setID',
-                        blockType: 'command',
-                        text: '将用户名设置为[ID]',
-                        arguments: {
-                            ID: {
-                                type: 'string',
-                                defaultValue: ''
-                            }
-                        }
+                        opcode: 'Return_Server_List',
+                        blockType: 'reporter',
+                        text: '服务器列表',
+
+                    },
+                    {
+                        opcode: 'Return_username',
+                        blockType: 'reporter',
+                        text: '用户名',
                     },
                     {
                         opcode: 'Return_receive',
@@ -75,22 +88,15 @@
 
                     },
                     {
-                        opcode: 'Return_Server_List',
-                        blockType: 'reporter',
-                        text: '服务器列表',
-
-                    },
-
-                    {
-                        opcode: 'Return_username',
-                        blockType: 'reporter',
-                        text: '用户名',
-
-                    },
-                    {
                         opcode: 'Return_message_Num',
                         blockType: 'reporter',
-                        text: '共收到的数据量',
+                        text: '共收到的信息量',
+
+                    },
+                    {
+                        opcode: 'Return_Auther',
+                        blockType: 'reporter',
+                        text: '作者',
 
                     },
                     {
@@ -103,7 +109,7 @@
             };
         }
 
-        async connect({
+        async Connect({
             IP
         }) {
             const self = this;
@@ -126,7 +132,7 @@
             }
 
         }
-        sendMessage({
+        SendMessage({
             MESSAGE
         }) {
             if (username != null) {
@@ -150,7 +156,7 @@
                 Server.send(JSON.stringify(temp_json))
             }
         }
-        setID({
+        SetID({
             ID
         }) {
             username = String(ID)
@@ -162,11 +168,17 @@
         }
         Return_isConnect() {
             const self = this
-            if (Server.readyState == 1) {
+            if (Server==undefined){
+                self.isRunning=false
+            }
+            else if (Server.readyState == 1) {
                 self.isRunning = true
 
-            } else {
+            }
+            else {
                 self.isRunning = false
+                GlobalVar=''
+                Message_List=''
                 username = null
             }
             return String(self.isRunning)
@@ -185,7 +197,10 @@
             return "{wss://clvtpd-qnmsta-1206.preview.myide.io,\
             wss://b4b72ea4-1206-app.lightly.teamcode.com?port=1206&dcsId=b4b72ea4&token=B1zgKRFqRIW7N5ZL7FvZJA}"
         }
-        closeSocket() {
+        Return_Auther(){
+            return "@Q3dlaXpoaQ"
+        }
+        CloseSocket() {
             const self = this;
             if (this.isRunning) {
                 if (username != null) {
@@ -198,6 +213,7 @@
                 Server.close();
                 self.isRunning = false;
                 Message_List = ''
+                GlobalVar=''
             }
         }
     }
