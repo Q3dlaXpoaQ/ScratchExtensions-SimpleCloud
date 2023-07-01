@@ -10,34 +10,42 @@ server.on('connection', function (ws) {
     console.log(people)
     ws.on('message', function (message) {
         temp_json = JSON.parse(message.toString())
-        for (var i in real_json) {
-            if (real_json[i]['name'] == 'Server') {
-                real_json.splice(i, 1)
-                real_json.push(temp_json)
-            }
-            else if (real_json[i]['name'] == temp_json['name']) {
-                if (temp_json['val'] == 'disconnect') {
+        if (temp_json['name'] != undefined) {
+            for (var i in real_json) {
+                if (real_json[i]['name'] == 'Server') {
                     real_json.splice(i, 1)
-                }
-                else {
-                    real_json[i]['val'] = temp_json['val']
-                }
-                break
-            }
-            else if (real_json[i]['name'] != temp_json['name']) {
-                if (i == real_json.length - 1) {
                     real_json.push(temp_json)
                 }
-            }
+                else if (real_json[i]['name'] == temp_json['name']) {
+                    if (temp_json['val'] == 'disconnect') {
+                        real_json.splice(i, 1)
+                    }
+                    else {
+                        real_json[i]['val'] = temp_json['val']
+                    }
+                    break
+                }
+                else if (real_json[i]['name'] != temp_json['name']) {
+                    if (i == real_json.length - 1) {
+                        real_json.push(temp_json)
+                    }
+                }
 
+            }
+            server.clients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify(real_json));
+                }
+            })
         }
-
-        server.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify(real_json));
-            }
-
-        })
+        else if (temp_json['cmd'] == 'GVar'){
+            server.clients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify(temp_json));
+                }
+    
+            })
+        }
     })
     ws.on('close', function () {
         people--
