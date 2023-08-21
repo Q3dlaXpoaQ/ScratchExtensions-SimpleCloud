@@ -1,18 +1,20 @@
 (function (Scratch) {
+    'use strict';
     let Server;
-    let messageNum = 0;
-    let username = null;
-    let Message_List='';
-    let GlobalVar='';
     class SimpleCloud {
         constructor() {
             this.isRunning = false
+            this.messageNum = 0;
+            this.username = null;
+            this.Message_List='';
+            this.GlobalVar='';
         }
         getInfo() {
             return {
                 id: 'Q3dlaXpoaQ',
                 name: '简单联机',
                 color1: '#8608fc',
+                color3:'#FFFFFF',
                 blocks: [{
                         opcode: 'Connect',
                         blockType: 'command',
@@ -121,12 +123,12 @@
                 Server.onmessage = function (str) {
                     let temp_json = JSON.parse(str.data)
                     if (temp_json instanceof Array) {
-                        Message_List = JSON.stringify(temp_json)
-                        messageNum++
+                        self.Message_List = JSON.stringify(temp_json)
+                        self.messageNum++
                     }
                     else if (temp_json instanceof Object) {
                         delete temp_json['cmd']
-                        GlobalVar = JSON.stringify(temp_json['var'])
+                        self.GlobalVar = JSON.stringify(temp_json['var'])
                     }
                 }
             }
@@ -135,9 +137,9 @@
         SendMessage({
             MESSAGE
         }) {
-            if (username != null) {
+            if (this.username != null) {
                 let tempjson = {
-                    'name': username,
+                    'name': this.username,
                     'val': {}
                 }
                 tempjson['val'] = JSON.parse(MESSAGE)
@@ -148,7 +150,7 @@
         SetGlobalVar({
             Var
         }) {
-            if (username != null) {
+            if (this.username != null) {
                 let temp_json = {
                     'cmd': 'GVar',
                     'var': JSON.parse(Var)
@@ -159,12 +161,12 @@
         SetID({
             ID
         }) {
-            username = String(ID)
+            this.username = String(ID)
         }
 
 
         Return_receive() {
-            return Message_List;
+            return String(this.Message_List);
         }
         Return_isConnect() {
             const self = this
@@ -177,21 +179,21 @@
             }
             else {
                 self.isRunning = false
-                GlobalVar=''
-                Message_List=''
-                username = null
+                self.GlobalVar=''
+                self.Message_List=''
+                self.username = null
             }
             return String(self.isRunning)
 
         }
         Return_message_Num() {
-            return messageNum;
+            return String(this.messageNum);
         }
         Return_username() {
-            return username;
+            return String(this.username);
         }
         Return_GVar() {
-            return GlobalVar;
+            return String(this.GlobalVar);
         }
         Return_Server_List() {
             return "{wss://clvtpd-qnmsta-1206.preview.myide.io,\
@@ -203,17 +205,17 @@
         CloseSocket() {
             const self = this;
             if (this.isRunning) {
-                if (username != null) {
+                if (this.username != null) {
                     Server.send(JSON.stringify({
-                        'name': username,
+                        'name': this.username,
                         'val': 'disconnect'
                     }))
                 }
-                username = null;
+                this.username = null;
                 Server.close();
                 self.isRunning = false;
-                Message_List = ''
-                GlobalVar=''
+                this.Message_List = ''
+                this.GlobalVar=''
             }
         }
     }
